@@ -1,0 +1,28 @@
+Rank,Feature name,F-statistics,P-value
+1,d35_circularity,45.479576,4.341231e-09
+2,d35_solidity,36.945314,6.481579e-08
+3,d35_aspect ratio,25.470105,3.668412e-06
+4,d21_circularity,25.429180,3.725194e-06
+5,d28_circularity,24.985761,4.401883e-06
+6,d21_solidity,20.409240,2.604892e-05
+7,d28_aspect ratio,19.856005,3.252975e-05
+8,d14_aspect ratio,19.703908,3.458874e-05
+9,d28_solidity,15.082480,2.380904e-04
+10,d14_solidity,7.660881,7.289444e-03
+11,d14_circularity,7.555090,7.683000e-03
+12,d21_aspect ratio,7.139103,9.460420e-03
+13,Deviation_from_scaling_absolute,4.486061,3.788556e-02
+14,Deviation_from_scaling_normalized,4.486061,3.788556e-02
+15,d35_Diameter (um),4.176654,4.491918e-02
+16,d35_Area (um2),3.167432,7.965531e-02
+17,Scaling,2.203733,1.423667e-01
+18,d21_Diameter (um),1.846010,1.788050e-01
+19,d21_Area (um2),1.284778,2.610521e-01
+20,d14_Diameter (um),1.239883,2.694725e-01
+21,d14_Area (um2),1.038792,3.117689e-01
+22,d28_Diameter (um),1.019808,3.161978e-01
+23,d28_Area (um2),0.698929,4.061155e-01
+24,d21_perimeter (um),0.621063,4.334319e-01
+25,d14_perimeter (um),0.200286,6.559337e-01
+26,d28_perimeter (um),0.168369,6.828742e-01
+27,d35_perimeter (um),0.025281,8.741467e-01

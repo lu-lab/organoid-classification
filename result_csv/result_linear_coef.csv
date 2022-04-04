@@ -1,0 +1,28 @@
+Coef name,Coef
+Scaling,0.185371
+Deviation_from_scaling_absolute,0.201595
+Deviation_from_scaling_normalized,0.201595
+d14_Area (um2),0.134691
+d14_Diameter (um),0.354973
+d14_circularity,0.246282
+d14_perimeter (um),0.240631
+d14_aspect ratio,0.625329
+d14_solidity,0.320694
+d21_Area (um2),0.268666
+d21_Diameter (um),0.532505
+d21_circularity,0.474974
+d21_perimeter (um),0.154124
+d21_aspect ratio,0.271929
+d21_solidity,0.759119
+d28_Area (um2),0.194497
+d28_Diameter (um),0.196192
+d28_circularity,0.205741
+d28_perimeter (um),0.243205
+d28_aspect ratio,0.462854
+d28_solidity,0.233835
+d35_Area (um2),0.133917
+d35_Diameter (um),0.295779
+d35_circularity,0.815523
+d35_perimeter (um),0.408106
+d35_aspect ratio,0.328047
+d35_solidity,0.396810
