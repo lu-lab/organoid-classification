@@ -115,6 +115,8 @@ def find_best_model_fixed_training_set(X, y):
     for i, pc in enumerate(list_best_param_count):
         print('#%02d: %s, %d' % (i + 1, str(pc[0]), pc[1]))
 
+    return confusion_test
+
 
 def investigate_linear_svm_coef(X, y, features):
     # test
@@ -123,7 +125,7 @@ def investigate_linear_svm_coef(X, y, features):
     scaler = preprocessing.StandardScaler()
     model = SVC(kernel='linear')
 
-    result_file = open('result_csv/result_linear_coef.csv', 'w')
+    result_file = open('results/result_csv/result_linear_coef.csv', 'w')
     result_file.write('Coef name,Coef\n')
 
     coefs = []
@@ -143,19 +145,23 @@ def investigate_linear_svm_coef(X, y, features):
 def feature_selection_by_anova(X, y, features):
     n_repeats = 1000
     training_set_size = 0.7
-    plot_filepath = 'result_png/result_feature_selection.png'
     # #############################################################################
     # Plot the cross-validation score as a function of number of features
     ks = list(range(1, len(features) + 1))
     score_means_rbf = list()
     score_stds_rbf = list()
+    score_means_lin = list()
+    score_stds_lin = list()
     feature_selector = SelectKBest(f_classif)
     scaler = StandardScaler()
     svc_rbf = SVC(kernel='rbf', gamma=0.001, C=10)
+    svc_lin = SVC(kernel='linear', gamma='auto')
 
+    local_max_k = 0
     for k in ks:
         feature_selector.set_params(k=k)
         scores_rbf = []
+        scores_lin = []
         for _ in range(n_repeats):
             X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=training_set_size)
             feature_selector.fit(X_train, y_train)
@@ -165,17 +171,31 @@ def feature_selection_by_anova(X, y, features):
             X_tn_2 = scaler.transform(X_tn_1)
             X_tt_2 = scaler.transform(X_tt_1)
             svc_rbf.fit(X_tn_2, y_train)
+            svc_lin.fit(X_tn_2, y_train)
             scores_rbf.append(f1_score(y_test, svc_rbf.predict(X_tt_2)))
+            scores_lin.append(f1_score(y_test, svc_lin.predict(X_tt_2)))
 
         score_means_rbf.append(np.mean(scores_rbf))
         score_stds_rbf.append(np.std(scores_rbf))
+        score_means_lin.append(np.mean(scores_lin))
+        score_stds_lin.append(np.std(scores_lin))
+
+        # find the local maximum
+        if k == local_max_k + 1:
+            if k == 1 or (score_means_rbf[-1] > score_means_rbf[-2] and score_means_lin[-1] > score_means_lin[-2]):
+                local_max_k = k
 
     # draw the plot
     fig, ax = plt.subplots(figsize=(5, 4))
-    ax.plot(ks, score_means_rbf, c=CB_color_cycle[0], )
-    plt.vlines(12, 0, 1,
+    ax.plot(ks, score_means_rbf, label='RBF', c=CB_color_cycle[0], )
+    ax.plot(ks, score_means_lin, label='Linear', c=CB_color_cycle[4], )
+    plt.vlines(local_max_k, min(score_means_rbf + score_means_lin), max(score_means_rbf + score_means_lin) + 0.01,
                colors='k', linestyles='dashed')
-    plt.xticks([1, 5, 10, 12, 15, 20, 25, 27])
+    list_xticks = [1, 5, 10, 15, 20, 25, 27]
+    if local_max_k not in list_xticks:
+        list_xticks.append(local_max_k)
+        list_xticks.sort()
+    plt.xticks(list_xticks)
     range_yticks = list(np.arange(0.8, max(score_means_rbf) + 0.02, 0.02))
     plt.yticks(range_yticks)
     plt.xlim((0, 27))
@@ -183,7 +203,8 @@ def feature_selection_by_anova(X, y, features):
     plt.xlabel('Number of features selected')
     plt.ylabel('SVM Accuracy Score')
     plt.tight_layout()
-    plt.savefig(plot_filepath)
+    plt.savefig('results/result_png/result_feature_selection.png')
+    plt.savefig('results/result_pdf/result_feature_selection.pdf')
     plt.close()
 
 
@@ -192,7 +213,7 @@ def feature_selection_by_anova_simple(X, y, features):
     feature_table = [(name, f, p) for name, f, p in zip(features, f_stats, p_values)]
     feature_table.sort(key=lambda x: x[2])
 
-    result_filepath = 'result_csv/result_feature_anova.csv'
+    result_filepath = 'results/result_csv/result_feature_anova.csv'
     with open(result_filepath, 'w') as h:
         h.write("Rank,Feature name,F-statistics,P-value\n")
         for i, x in enumerate(feature_table):
@@ -202,7 +223,7 @@ def feature_selection_by_anova_simple(X, y, features):
 def pca_plot(X, y, features):
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
-    label_map = {0: 'Bad', 1: 'Good'}
+    label_map = {0: 'Do not grow as expected', 1: 'Develop normally'}
     label = np.array([label_map[_y] for _y in y])
 
     # pca
@@ -210,16 +231,16 @@ def pca_plot(X, y, features):
     X_pca = pca.fit_transform(X_scaled)
 
     # plot data
-    plot_filepath = 'result_png/pca_plot.png'
     pc_1 = X_pca[:, 0]
     pc_2 = X_pca[:, 1]
     df = pd.DataFrame(data={'PC1': pc_1, 'PC2': pc_2, 'label': label})
-    sns.scatterplot(data=df, x="PC1", y="PC2", hue='label', palette=['#0073CF', '#BF1932'])
-    plt.savefig(plot_filepath)
+    sns.scatterplot(data=df, x="PC1", y="PC2", hue='label', palette=['#0073CF', '#BF1932'], )
+    plt.savefig('results/result_png/pca_plot.png')
+    plt.savefig('results/result_pdf/pca_plot.pdf')
     plt.close()
 
     # save pca result to csv file
-    csv_filepath = 'result_csv/pca_coefs.csv'
+    csv_filepath = 'results/result_csv/pca_coefs.csv'
     with open(csv_filepath, 'w') as h:
         h.write('Organoid_ID,Label,' + ','.join(['PC_%d' % i for i in range(1, X_pca.shape[1] + 1)]) + '\n')
         for i in range(1, X_pca.shape[0] + 1):
@@ -236,7 +257,8 @@ def plot_confusion_matrix(matrix):
     plt.yticks([0.5, 1.5], ['Do not grow as expected', 'Develop normally'], va='center')
     plt.ylabel('Ground-truth')
     plt.tight_layout()
-    plt.savefig('result_png/confusion_matrix.png', transparent=True)
+    plt.savefig('results/result_png/confusion_matrix.png', transparent=True)
+    plt.savefig('results/result_pdf/confusion_matrix.pdf', transparent=True)
     plt.close()
 
 
@@ -244,12 +266,15 @@ def main():
     # read data
     X, y, features = read_data('organoid_data.csv')
 
-    os.makedirs('organoid/result_csv', exist_ok=True)
-    os.makedirs('organoid/result_png', exist_ok=True)
-    os.makedirs('organoid/log', exist_ok=True)
+    os.makedirs('results/result_csv', exist_ok=True)
+    os.makedirs('results/result_png', exist_ok=True)
+    os.makedirs('results/result_pdf', exist_ok=True)
+
+    # pca plots
+    pca_plot(X, y, features)
 
     # best model
-    find_best_model_fixed_training_set(X, y)
+    confusion_test = find_best_model_fixed_training_set(X, y)
 
     # feature importance by linear svm coefficient
     investigate_linear_svm_coef(X, y, features)
@@ -259,7 +284,7 @@ def main():
     feature_selection_by_anova(X, y, features)
 
     # confusion matrix
-    plot_confusion_matrix([[4624, 2145], [852, 13379]])
+    plot_confusion_matrix(confusion_test)
 
 
 if __name__ == '__main__':
