@@ -13,6 +13,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
+from sklearn.manifold import TSNE
 
 plt.style.use('plotstyle.txt')
 CB_color_cycle = ['#377eb8', '#ff7f00', '#4daf4a',
@@ -189,8 +190,10 @@ def feature_selection_by_anova(X, y, features):
     fig, ax = plt.subplots(figsize=(5, 4))
     ax.plot(ks, score_means_rbf, label='RBF', c=CB_color_cycle[0], )
     ax.plot(ks, score_means_lin, label='Linear', c=CB_color_cycle[4], )
-    plt.vlines(local_max_k, min(score_means_rbf + score_means_lin), max(score_means_rbf + score_means_lin) + 0.01,
+    plt.vlines(12, min(score_means_rbf + score_means_lin), max(score_means_rbf + score_means_lin) + 0.01,
                colors='k', linestyles='dashed')
+    #plt.vlines(local_max_k, min(score_means_rbf + score_means_lin), max(score_means_rbf + score_means_lin) + 0.01,
+    #           colors='k', linestyles='dashed')
     list_xticks = [1, 5, 10, 15, 20, 25, 27]
     if local_max_k not in list_xticks:
         list_xticks.append(local_max_k)
@@ -262,6 +265,26 @@ def plot_confusion_matrix(matrix):
     plt.close()
 
 
+def tsne_plot(X, y):
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    label_map = {0: 'Do not grow as expected', 1: 'Develop normally'}
+    label = np.array([label_map[_y] for _y in y])
+
+    # t-SNE
+    tsne = TSNE(n_components=2, random_state=0, perplexity=10, init='pca', method='exact', learning_rate=10)
+    X_tsne = tsne.fit_transform(X_scaled)
+
+    # plot data
+    tsne_1 = X_tsne[:, 0]
+    tsne_2 = X_tsne[:, 1]
+    df = pd.DataFrame(data={'t-SNE Component 1': tsne_1, 't-SNE Component 2': tsne_2, 'label': label})
+    sns.scatterplot(data=df, x="t-SNE Component 1", y="t-SNE Component 2", hue='label', palette=['#0073CF', '#BF1932'])
+    plt.savefig('results/result_png/tSNE_plot.png')
+    plt.savefig('results/result_pdf/tSNE_plot.pdf')
+    plt.close()
+
+
 def main():
     # read data
     X, y, features = read_data('organoid_data.csv')
@@ -272,6 +295,9 @@ def main():
 
     # pca plots
     pca_plot(X, y, features)
+
+    # t-SNE plots
+    tsne_plot(X, y)
 
     # best model
     confusion_test = find_best_model_fixed_training_set(X, y)

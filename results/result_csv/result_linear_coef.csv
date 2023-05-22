@@ -1,28 +1,36 @@
 Coef name,Coef
-Scaling,0.185094
-Deviation_from_scaling_absolute,0.203740
-Deviation_from_scaling_normalized,0.203740
-d14_Area (um2),0.128728
-d14_Diameter (um),0.342543
-d14_circularity,0.247271
-d14_perimeter (um),0.247977
-d14_aspect ratio,0.622203
-d14_solidity,0.308856
-d21_Area (um2),0.265954
-d21_Diameter (um),0.521148
-d21_circularity,0.477917
-d21_perimeter (um),0.153536
-d21_aspect ratio,0.265897
-d21_solidity,0.760336
-d28_Area (um2),0.196633
-d28_Diameter (um),0.203787
-d28_circularity,0.204941
-d28_perimeter (um),0.224002
-d28_aspect ratio,0.468297
-d28_solidity,0.227163
-d35_Area (um2),0.130038
-d35_Diameter (um),0.289373
-d35_circularity,0.827046
-d35_perimeter (um),0.408710
-d35_aspect ratio,0.335462
-d35_solidity,0.408679
+Scaling,0.108674
+Deviation_from_scaling_absolute,0.177641
+Deviation_from_scaling_normalized,0.177641
+d14_Area (um2),0.083325
+d14_Diameter (um),0.142177
+d14_circularity,0.239143
+d14_perimeter (um),0.122418
+d14_aspect ratio,0.287928
+d14_solidity,0.248281
+d14_intensity_mean,0.320390
+d14_intensity_std,0.539164
+d21_Area (um2),0.198078
+d21_Diameter (um),0.280401
+d21_circularity,0.345538
+d21_perimeter (um),0.100165
+d21_aspect ratio,0.160162
+d21_solidity,0.429835
+d21_intensity_mean,0.331452
+d21_intensity_std,0.145189
+d28_Area (um2),0.103735
+d28_Diameter (um),0.104003
+d28_circularity,0.112605
+d28_perimeter (um),0.112469
+d28_aspect ratio,0.387332
+d28_solidity,0.204442
+d28_intensity_mean,0.154443
+d28_intensity_std,0.155165
+d35_Area (um2),0.074182
+d35_Diameter (um),0.127263
+d35_circularity,0.707827
+d35_perimeter (um),0.253496
+d35_aspect ratio,0.254368
+d35_solidity,0.436225
+d35_intensity_mean,0.204680
+d35_intensity_std,0.445451
