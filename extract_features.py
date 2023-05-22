@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 
 def main():
+    # change the imgdir to read your own image directory
     imgdir = '/Users/1plus9/Dropbox (GaTech)/Data/All gen3 data used for the paper'
     outfile = 'features.csv'
 
